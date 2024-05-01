@@ -1,0 +1,34 @@
+// button reset styles
+button {
+    -webkit-appearance: none;
+    border-radius: 0;
+    text-align: inherit;
+    background: none;
+    box-shadow: none;
+    padding: 0;
+    cursor: pointer;
+    border: none;
+    color: inherit;
+    font: inherit;
+}
+
+.btn {
+    width: 100%;
+    padding: 1rem;
+    color: $primaryColor;
+    background-color: $secondaryColor;
+    border: .25rem solid $primaryColor;
+    border-radius: .25rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+.btn--sm {
+    padding: .5rem;
+}
+
+.btn-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+}
