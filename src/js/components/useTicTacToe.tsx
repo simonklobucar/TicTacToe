@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import gameLogic from '../utils/gameLogic';
 
 const DEFAULT_GRID_SIZE = 3;
 
@@ -14,6 +15,12 @@ const SCORES = {
 };
 
 const useTicTacToe = () => {
+    const {
+        generateWinningConditions
+    } = gameLogic();
+
+    generateWinningConditions(3);
+
     const [gridSize, setGridSize] = useState(DEFAULT_GRID_SIZE);
     const [gridTiles, setGridTiles] = useState(generateTiles(DEFAULT_GRID_SIZE * DEFAULT_GRID_SIZE));
     const [activePlayer, setActivePlayer] = useState(PLAYERS.human);
@@ -32,14 +39,11 @@ const useTicTacToe = () => {
         if (gridTiles[index].player === "" && !winner) {
             const newGridTiles = [...gridTiles];
             newGridTiles[index].player = activePlayer;
-            setGridTiles(newGridTiles);
-            setWinner(checkWinner(gridTiles));
-            setActivePlayer(PLAYERS.ai);
+            handleMove(newGridTiles, PLAYERS.ai);
         }
     }
 
     useEffect(() => {
-        // Check if it's the bot's turn and handle bot's move
         if (activePlayer === PLAYERS.ai) {
             bestMove();
         }
@@ -52,7 +56,7 @@ const useTicTacToe = () => {
         for (let index = 0; index < gridSize*gridSize; index++) {
             if (newGridTiles[index].player === '') {
                 newGridTiles[index].player = PLAYERS.ai;
-                let score = minimax(newGridTiles, false, 0);
+                let score = minimax(newGridTiles, false, 0, 5);
                 newGridTiles[index].player = '';
                 if (score > bestScore) {
                     bestScore = score;
@@ -62,21 +66,23 @@ const useTicTacToe = () => {
         }
         if(newGridTiles[move].player === '') {
             newGridTiles[move].player = PLAYERS.ai;
-            setGridTiles(newGridTiles);
-            setWinner(checkWinner(newGridTiles));
-            setActivePlayer(PLAYERS.human);
-
+            handleMove(newGridTiles, PLAYERS.human);
         }
-
     }
 
-    function minimax(board, isMaximizing, depth) {
+    function handleMove(newTiles, nextPlayer) {
+        setGridTiles(newTiles);
+        setWinner(checkWinner(gridTiles));
+        setActivePlayer(nextPlayer);
+    }
+
+    function minimax(board, isMaximizing, depth, maxDepth) {
         const winner = checkWinner(board);
         if (winner) {
             return SCORES[winner];
         }
 
-        if (depth >= 3) {
+        if (depth >= maxDepth) {
             return 0; // Return 0 for the tie if depth limit is reached
         }
 
@@ -85,7 +91,7 @@ const useTicTacToe = () => {
             for(let index = 0; index < gridSize*gridSize; index++) {
                 if(board[index].player === '') {
                     board[index].player = PLAYERS.ai;
-                    let score = minimax(board, false, depth + 1)
+                    let score = minimax(board, false, depth + 1, maxDepth)
                     board[index].player = '';
                     bestScore = Math.max(score, bestScore);
                 }
@@ -96,7 +102,7 @@ const useTicTacToe = () => {
             for(let index = 0; index < gridSize*gridSize; index++) {
                 if(board[index].player === '') {
                     board[index].player = PLAYERS.human;
-                    let score = minimax(board, true, depth + 1)
+                    let score = minimax(board, true, depth + 1, maxDepth)
                     board[index].player = '';
                     bestScore = Math.min(score, bestScore);
                 }

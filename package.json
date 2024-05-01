@@ -16,7 +16,9 @@
         "express": "^4.19.2",
         "nodemon": "^3.1.0",
         "reach": "^1.0.1",
-        "react-dom": "^18.3.0"
+        "react-dom": "^18.3.0",
+        "socket.io": "^4.7.5",
+        "socket.io-client": "^4.7.5"
     },
     "devDependencies": {
         "@babel/core": "^7.24.4",
